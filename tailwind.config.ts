@@ -14,6 +14,10 @@ const config: Config = {
           "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
       },
     },
+    fontFamily: {
+      oswald: 'var(--font-oswald)',
+      roboto: 'var(--font-roboto)',
+    },
   },
   plugins: [],
 };
