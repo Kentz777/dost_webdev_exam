@@ -11,47 +11,29 @@ const DateAndWeather: React.FC = () => {
   const [latitude, setLatitude] = useState<string>('');
   const [country, setCountry] = useState<string>('');
   const [state, setState] = useState<string>('');
-  const [error, setError] = useState<string>('');
 
   const handleSearch = async () => {
     const apiKey = 'b20fd2c394d049d69bbdcea3c26f78a6';
     const url = `https://api.weatherbit.io/v2.0/forecast/hourly?city=${city}&key=${apiKey}&hours=48`;
 
-    setError('');
-    try {
-      const response = await fetch(url);
+    const response = await fetch(url);
+    const data = await response.json();
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const data = await response.json();
-
-      if (data && data.data && data.data.length > 0) {
-        const firstHourData = data.data[0];
-        setWeather(`Temperature: ${firstHourData.temp}°C, Weather: ${firstHourData.weather.description}`);
-        setCityName(data.city_name);
-        setTimezone(data.timezone);
-        setLatitude(data.lat);
-        setCountry(data.country_code);
-        setState(data.state_code);
-      } else {
-        setWeather('Weather data not found');
-        setCityName('');
-        setTimezone('');
-        setLatitude('');
-        setCountry('');
-        setState('');
-      }
-    } catch (error) {
-      if (error.message.includes('403')) {
-        setError('Authorization error. Please check your API key.');
-      } else if (error.message.includes('429')) {
-        setError('Rate limit exceeded. Please try again later.');
-      } else {
-        setError('Error fetching weather data');
-      }
-      console.error('Error fetching weather data:', error);
+    if (data && data.data && data.data.length > 0) {
+      const firstHourData = data.data[0];
+      setWeather(`Temperature: ${firstHourData.temp}°C, Weather: ${firstHourData.weather.description}`);
+      setCityName(data.city_name);
+      setTimezone(data.timezone);
+      setLatitude(data.lat);
+      setCountry(data.country_code);
+      setState(data.state_code);
+    } else {
+      setWeather('Weather data not found');
+      setCityName('');
+      setTimezone('');
+      setLatitude('');
+      setCountry('');
+      setState('');
     }
   };
 
@@ -82,12 +64,6 @@ const DateAndWeather: React.FC = () => {
             <p className='text-lg mb-2'>Timezone: {timezone}</p>
             <p className='text-lg mb-2'>Latitude: {latitude}</p>
             <p className='text-lg'>State: {state}, Country: {country}</p>
-          </div>
-        )}
-        {error && (
-          <div className='mt-6 bg-red-900 bg-opacity-50 p-4 rounded'>
-            <h2 className='text-xl font-bold mb-2 text-red-300'>Error</h2>
-            <p className='text-red-100'>{error}</p>
           </div>
         )}
       </div>
